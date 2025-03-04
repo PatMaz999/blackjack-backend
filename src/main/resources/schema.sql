@@ -1,6 +1,6 @@
-create table users
+create table Users
 (
-    id BIGINT auto_increment primary key,
+    id long auto_increment primary key,
     username varchar(32) not null,
     points int not null
 );
