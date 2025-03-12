@@ -12,13 +12,13 @@ import java.util.List;
 @Setter
 public class Users {
     @Id
-//    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String username;
     private int points;
     private boolean gameInProgress; //don't write to database
     private long currentGameId;
     @OneToMany
-    @JoinColumn(name = "gameId") //???
+//    @JoinColumn(name = "gameId") //???
     private List<Games> games;
 }

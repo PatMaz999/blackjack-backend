@@ -1,6 +1,6 @@
 create table Users
 (
-    id long auto_increment primary key,
+    id bigint auto_increment primary key,
     username varchar(32) not null,
     points int not null,
     gameInProgress boolean default false,
@@ -8,7 +8,7 @@ create table Users
 );
 
 create table Games(
-    id long auto_increment primary key,
+    id bigint auto_increment primary key,
     playerId long not null,
     bet int,
     score int,
