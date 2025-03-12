@@ -27,5 +27,5 @@ public class Games {
     private long playerId;
     private int bet;
     private int score;
-    private boolean finished;
+    private boolean finished = false;
 }

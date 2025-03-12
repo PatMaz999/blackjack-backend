@@ -13,7 +13,7 @@ public class GameService {
     private final PlayerRepository playerRepository;
     private final GameRepository gameRepository;
 
-    //returns game id
+    //returns a game ID, which can be used to connect to the game
     public long startGame(long playerId, int bet) {
         Users users = playerRepository.findById(playerId).orElseThrow();
         if (users.isGameInProgress())
@@ -36,6 +36,10 @@ public class GameService {
 
     public Games getGames(long id) {
         return gameRepository.findById(id).orElseThrow();
+    }
+
+    public Users getUsers(long id) {
+        return playerRepository.findById(id).orElseThrow();
     }
 
 //    public int drawCard(long playerId){

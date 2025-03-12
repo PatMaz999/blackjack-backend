@@ -3,15 +3,15 @@ create table Users
     id bigint auto_increment primary key,
     username varchar(32) not null,
     points int not null,
-    gameInProgress boolean default false,
-    currentGameId long default -1
+    game_in_progress boolean not null default false,
+    current_game_id bigint not null default -1
 );
 
 create table Games(
     id bigint auto_increment primary key,
-    playerId long not null,
-    bet int,
-    score int,
-    finished boolean default false,
-    constraint fk_playerId foreign key (playerId) references Users(id)
+    player_id bigint not null,
+    bet int not null,
+    score int not null,
+    finished boolean not null default false,
+    constraint fk_player_id foreign key (player_id) references Users(id)
 );
