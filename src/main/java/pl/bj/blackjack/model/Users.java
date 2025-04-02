@@ -19,7 +19,7 @@ public class Users {
     private int points;
     private boolean gameInProgress = false; //don't write to database
     private long currentGameId = -1;
-//    @OneToMany
-////    @JoinColumn(name = "gameId") //???
-//    private List<Games> games;
+    @OneToMany
+    @JoinColumn(name = "playerId")
+    private List<Games> games;
 }

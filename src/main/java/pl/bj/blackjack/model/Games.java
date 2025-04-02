@@ -17,7 +17,7 @@ public class Games {
     public Games(long playerId, int bet) {
         this.playerId = playerId;
         this.bet = bet;
-        this.score = 0; //default value is 1850 ???
+        this.score = 0;
         this.finished = false;
     }
 

@@ -7,6 +7,7 @@ import pl.bj.blackjack.model.Users;
 import pl.bj.blackjack.repository.GameRepository;
 import pl.bj.blackjack.repository.PlayerRepository;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -44,6 +45,10 @@ public class GameService {
         return playerRepository.findById(id).orElseThrow();
     }
 
+    public List<Games> getPlayerGames(long id){
+        return playerRepository.findById(id).orElseThrow().getGames();
+    }
+
     public int drawCard(long playerId) {
         Users users = playerRepository.findById(playerId).orElseThrow();
         if (!users.isGameInProgress())
@@ -73,6 +78,8 @@ public class GameService {
     public boolean getResult(long playerId) {
         Users users = playerRepository.findById(playerId).orElseThrow();
         Games games = gameRepository.findById(users.getCurrentGameId()).orElseThrow();
+        if(users.getCurrentGameId() == -1)
+            throw new IllegalArgumentException("no game in progress");
         users.setCurrentGameId(-1);
         users.setGameInProgress(false);
         games.setFinished(true);
@@ -80,10 +87,11 @@ public class GameService {
         if(games.getScore() > 21){
             games.setWin(false);
         }
+
         else{
         int opponentScore = 0;
         Random rand = new Random();
-        while(opponentScore < games.getScore()) {
+        while(opponentScore <= games.getScore()) {
             opponentScore += rand.nextInt(1, 11);
             if(opponentScore > 21){
                 games.setWin(true);
@@ -96,9 +104,8 @@ public class GameService {
         if(games.getWin() == null)
             games.setWin(false);
 
-//        TODO: add draw option
-
         }
+//        TODO: add draw option
 
         if(games.getWin())
             users.setPoints(users.getPoints() + games.getBet() * 2);
@@ -109,6 +116,5 @@ public class GameService {
 
 //        INFO return score, result(false = lose, null = error, true = win), opponentScore (-1 = not finished)
     }
-
 
 }
