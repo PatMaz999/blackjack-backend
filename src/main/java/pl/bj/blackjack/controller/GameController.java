@@ -26,18 +26,19 @@ public class GameController {
         return gameService.getGames(gameId);
     }
 
-//    @GetMapping("/player/{playerId}/game/{gameId}/draw")
-//    public int drawCard(@PathVariable long playerId) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-
-//    @GetMapping("/player/{playerId}/games/{gameId}/result")
-//    public boolean result(){
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-
     @GetMapping("/users/{id}")
     public Users getUser(@PathVariable long id) {
         return gameService.getUsers(id);
     }
+
+    @GetMapping("/player/{playerId}/game/{gameId}/draw")
+    public int drawCard(@PathVariable long playerId) {
+        return gameService.drawCard(playerId);
+    }
+
+    @GetMapping("/player/{playerId}/games/{gameId}/result")
+    public boolean result(@PathVariable long playerId){
+        return gameService.getResult(playerId);
+    }
+
 }

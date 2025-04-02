@@ -13,5 +13,7 @@ create table Games(
     bet int not null,
     score int not null,
     finished boolean not null default false,
+    opponent_score int default 0,
+    win boolean default null,     --could be null?
     constraint fk_player_id foreign key (player_id) references Users(id)
 );
