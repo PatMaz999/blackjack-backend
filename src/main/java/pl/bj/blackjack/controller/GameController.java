@@ -2,6 +2,7 @@ package pl.bj.blackjack.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import pl.bj.blackjack.controller.dto.UsersDto;
 import pl.bj.blackjack.model.Games;
 import pl.bj.blackjack.model.Users;
 import pl.bj.blackjack.service.GameService;
@@ -14,25 +15,30 @@ public class GameController {
 
     private final GameService gameService;
 
-//    before login option exists it's not secure
+    //    before login option exists it's not secure
     @PostMapping("/players/{playerId}/play/{bet}")
-    public long play(@PathVariable long playerId,@PathVariable int bet){
-        return gameService.startGame(playerId,bet);
+    public long play(@PathVariable long playerId, @PathVariable int bet) {
+        return gameService.startGame(playerId, bet);
     }
 
     @GetMapping("/games/{gameId}")
-    public Games getGames(@PathVariable long gameId){
+    public Games getGames(@PathVariable long gameId) {
         return gameService.getGames(gameId);
     }
 
     @GetMapping("/players/{playerId}/games")
-    public List<Games> getPlayerGames(@PathVariable long playerId){
+    public List<Games> getPlayerGames(@PathVariable long playerId) {
         return gameService.getPlayerGames(playerId);
     }
 
-    @GetMapping("/palyers/{id}")
+    @GetMapping("/players")
+    public List<UsersDto> getPlayers() {
+        return UsersDtoMapper.mapToUsersDtos(gameService.getPlayers());
+    }
+
+    @GetMapping("/players/{id}")
     public Users getPlayers(@PathVariable long id) {
-        return gameService.getUsers(id);
+        return gameService.getPlayers(id);
     }
 
     @PatchMapping("/players/{playerId}/drawCard")
@@ -41,7 +47,7 @@ public class GameController {
     }
 
     @PatchMapping("/players/{playerId}/result")
-    public boolean result(@PathVariable long playerId){
+    public boolean result(@PathVariable long playerId) {
         return gameService.getResult(playerId);
     }
 

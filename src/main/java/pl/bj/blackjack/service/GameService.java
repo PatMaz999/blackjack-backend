@@ -41,12 +41,17 @@ public class GameService {
         return gameRepository.findById(id).orElseThrow();
     }
 
-    public Users getUsers(long id) {
+    public Users getPlayers(long id) {
         return playerRepository.findById(id).orElseThrow();
     }
 
+    public List<Users> getPlayers() {
+        return playerRepository.findAll();
+    }
+
+    //not optimal
     public List<Games> getPlayerGames(long id){
-        return playerRepository.findById(id).orElseThrow().getGames();
+        return gameRepository.findAllByPlayerId(id);
     }
 
     public int drawCard(long playerId) {
