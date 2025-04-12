@@ -1,7 +1,7 @@
 package pl.bj.blackjack.controller;
 
 import pl.bj.blackjack.controller.dto.UsersDto;
-import pl.bj.blackjack.model.Users;
+import pl.bj.blackjack.model.entity.Users;
 
 import java.util.List;
 import java.util.stream.Collectors;

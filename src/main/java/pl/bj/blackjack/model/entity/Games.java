@@ -1,4 +1,4 @@
-package pl.bj.blackjack.model;
+package pl.bj.blackjack.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -2,8 +2,8 @@ package pl.bj.blackjack.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.bj.blackjack.model.Games;
-import pl.bj.blackjack.model.Users;
+import pl.bj.blackjack.model.entity.Games;
+import pl.bj.blackjack.model.entity.Users;
 import pl.bj.blackjack.repository.GameRepository;
 import pl.bj.blackjack.repository.PlayerRepository;
 

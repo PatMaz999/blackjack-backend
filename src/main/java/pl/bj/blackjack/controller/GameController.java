@@ -3,8 +3,8 @@ package pl.bj.blackjack.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import pl.bj.blackjack.controller.dto.UsersDto;
-import pl.bj.blackjack.model.Games;
-import pl.bj.blackjack.model.Users;
+import pl.bj.blackjack.model.entity.Games;
+import pl.bj.blackjack.model.entity.Users;
 import pl.bj.blackjack.service.GameService;
 
 import java.util.List;
