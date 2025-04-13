@@ -1,7 +1,12 @@
 package pl.bj.blackjack.model;
 
+import lombok.*;
 import pl.bj.blackjack.model.enmus.*;
 
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
 public class Card {
     CardRank cardRank; //enum
     CardSuit cardSuit; // enum

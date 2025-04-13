@@ -1,25 +1,18 @@
 package pl.bj.blackjack.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class Games {
-
-    public Games(long playerId, int bet) {
-        this.playerId = playerId;
-        this.bet = bet;
-        this.score = 0;
-        this.finished = false;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +23,15 @@ public class Games {
     private boolean finished = false;
     private Boolean win;
     private int opponentScore = 0;
+    @OneToMany
+    @JoinColumn(name = "gameId")
+    private List<CardsOfGame> cards;
+
+    public Games(long playerId, int bet) {
+        this.playerId = playerId;
+        this.bet = bet;
+        this.score = 0;
+        this.finished = false;
+    }
+
 }

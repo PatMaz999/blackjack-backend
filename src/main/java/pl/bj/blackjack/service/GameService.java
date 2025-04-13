@@ -2,19 +2,24 @@ package pl.bj.blackjack.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.bj.blackjack.model.Card;
+import pl.bj.blackjack.model.Cards;
+import pl.bj.blackjack.model.enmus.CardOwner;
+import pl.bj.blackjack.model.entity.CardsOfGame;
 import pl.bj.blackjack.model.entity.Games;
 import pl.bj.blackjack.model.entity.Users;
+import pl.bj.blackjack.repository.CardsOfGameRepository;
 import pl.bj.blackjack.repository.GameRepository;
 import pl.bj.blackjack.repository.PlayerRepository;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class GameService {
     private final PlayerRepository playerRepository;
     private final GameRepository gameRepository;
+    private final CardsOfGameRepository cardsOfGameRepository;
 
     //returns a game ID, which can be used to connect to the game
     public long startGame(long playerId, int bet) {
@@ -49,77 +54,80 @@ public class GameService {
         return playerRepository.findAll();
     }
 
-    //not optimal
+    //TODO: N + 1
     public List<Games> getPlayerGames(long id){
         return gameRepository.findAllByPlayerId(id);
     }
 
-    public int drawCard(long playerId) {
+    public CardsOfGame drawCard(long playerId) {
         Users users = playerRepository.findById(playerId).orElseThrow();
         if (!users.isGameInProgress())
             throw new IllegalArgumentException("no game in progress");
         if (users.getCurrentGameId() < 1)
             throw new IllegalArgumentException("Can't find any game");
         //check if currentGameId is valid
-
         Games games = gameRepository.findById(users.getCurrentGameId()).orElseThrow();
 
         if(games.getScore() > 21)
-            return games.getScore();
+            throw new IllegalArgumentException("Game isn't in progress");
 
-        Random rand = new Random();
-        games.setScore(games.getScore() + rand.nextInt(1, 11));
+//        Generating a unique card and saving it to the database
+        Set<Card> CurrentCards = CardsOfGameMapper.mapToCardsSet(games.getCards());
+        CardsOfGame card = new CardsOfGame(games.getId(), CardOwner.PLAYER, Cards.getUnique(CurrentCards));
+        cardsOfGameRepository.save(card);
 
+        games.setScore(games.getScore() + card.getCardValue());
         gameRepository.save(games);
 
         if(games.getScore() > 21){
             getResult(playerId); //if score is above 21 call getResult() function to end current game
         }
 
-        return games.getScore();
-//        INFO return score, result(false = lose, null = not finished, true = win), opponentScore (-1 = not finished)
+        return card;
     }
 
-    public boolean getResult(long playerId) {
+    public List<Card> getResult(long playerId) {
         Users users = playerRepository.findById(playerId).orElseThrow();
-        Games games = gameRepository.findById(users.getCurrentGameId()).orElseThrow();
         if(users.getCurrentGameId() == -1)
             throw new IllegalArgumentException("no game in progress");
+        Games games = gameRepository.findById(users.getCurrentGameId()).orElseThrow();
         users.setCurrentGameId(-1);
         users.setGameInProgress(false);
         games.setFinished(true);
 
         if(games.getScore() > 21){
-            games.setWin(false);
+            saveGameResult(games, users,0, false);
+            return new ArrayList<>();
         }
 
-        else{
         int opponentScore = 0;
-        Random rand = new Random();
+        Set<Card> cards = CardsOfGameMapper.mapToCardsSet(cardsOfGameRepository.findAllByGameId(games.getId()));
+        List<Card> opponentCards = new ArrayList<>();
         while(opponentScore <= games.getScore()) {
-            opponentScore += rand.nextInt(1, 11);
+            Card card = Cards.getUnique(cards);
+            opponentScore += card.getCardValue();
+            cards.add(card);
+            opponentCards.add(card);
+            cardsOfGameRepository.save(new CardsOfGame(games.getId(), CardOwner.COMPUTER, card));
+
             if(opponentScore > 21){
-                games.setWin(true);
-                break;
+                users.setPoints(users.getPoints() + games.getBet() * 2);
+                saveGameResult(games, users, opponentScore, true);
+                return opponentCards;
             }
-            games.setOpponentScore(opponentScore);
         }
-        if(games.getScore() > opponentScore)
-            games.setWin(true);
-        if(games.getWin() == null)
-            games.setWin(false);
-
-        }
+        saveGameResult(games, users,opponentScore, false);
+        return opponentCards;
 //        TODO: add draw option
-
-        if(games.getWin())
-            users.setPoints(users.getPoints() + games.getBet() * 2);
-
-        playerRepository.save(users);
-        gameRepository.save(games);
-        return games.getWin();
-
-//        INFO return score, result(false = lose, null = error, true = win), opponentScore (-1 = not finished)
     }
+
+    private boolean saveGameResult(Games games, Users users, int opponentScore, boolean result) {
+        games.setWin(result);
+        games.setOpponentScore(opponentScore);
+        gameRepository.save(games);
+        playerRepository.save(users);
+        return result;
+    }
+
 
 }
